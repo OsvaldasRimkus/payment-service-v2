@@ -1,5 +1,6 @@
 package lt.rimkus.payments.service;
 
+import lt.rimkus.payments.converter.PaymentConverter;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
 import lt.rimkus.payments.dto.CreatePaymentResponseDTO;
 import lt.rimkus.payments.factory.PaymentCreationFactory;
@@ -15,10 +16,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentCreationFactory paymentCreationFactory;
+    private final PaymentConverter paymentConverter;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory, PaymentConverter paymentConverter) {
         this.paymentRepository = paymentRepository;
         this.paymentCreationFactory = paymentCreationFactory;
+        this.paymentConverter = paymentConverter;
     }
 
     @Override
@@ -32,6 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
     public CreatePaymentResponseDTO savePayment(CreatePaymentRequestDTO requestDTO, CreatePaymentResponseDTO responseDTO) {
         Payment newPayment = paymentCreationFactory.createNewPayment(requestDTO);
         paymentRepository.save(newPayment);
+        responseDTO.setPaymentDTO(paymentConverter.convertPaymentToDTO(newPayment));
         return responseDTO;
     }
 }
