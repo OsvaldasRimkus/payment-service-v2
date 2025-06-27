@@ -23,13 +23,13 @@ public class CreatePaymentRequestValidator implements ConstraintValidator<Create
             isValid &= addViolation(context, isValid, "Creditor Bank BIC is mandatory when payment type is TYPE3", "creditorBankBIC");
         }
         if (PaymentTypeValidationUtils.isPaymentTypeNotValid(requestDTO.getType())) {
-            isValid &= addViolation(context, isValid, "Payment type is not valid", "type");
+            isValid &= addViolation(context, isValid, "Payment type is not valid", "type_valid");
         }
         if (CurrencyValidationUtils.isCurrencyNotValid(requestDTO.getMoney().getCurrency())) {
-            isValid &= addViolation(context, isValid, "Currency type is not valid", "money.currency");
+            isValid &= addViolation(context, isValid, "Currency type is not valid", "money.currency_valid");
         }
         if (CurrencyValidationUtils.isCurrencyNotValidForPaymentType(requestDTO.getMoney().getCurrency(), requestDTO.getType())) {
-            isValid &= addViolation(context, isValid, "Currency type is not valid for payment type", "money.currency");
+            isValid &= addViolation(context, isValid, "Currency type is not valid for payment type", "money.currency_compatible");
         }
         return isValid;
     }
