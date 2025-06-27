@@ -1,6 +1,8 @@
 package lt.rimkus.payments.enums;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum Currency {
     EUR("EUR"),
@@ -12,24 +14,15 @@ public enum Currency {
         this.code = code;
     }
 
-    public static boolean isCurrencyValid(String code) {
-        for (Currency currencyType : values()) {
-            if (currencyType.code.equals(code)) {
-                return true;
-            }
-        }
-        return false;
+    private static final Map<String, Currency> VALID_CURRENCIES =
+            Arrays.stream(values()).collect(Collectors.toMap(Enum::name, e -> e));
+
+    public static boolean isValidCurrency(String code) {
+        return VALID_CURRENCIES.containsKey(code);
     }
 
-    public static Currency fromCode(String code) {
-        if (code == null) {
-            return null;
-        }
-
-        return Arrays.stream(values())
-                .filter(c -> c.code.equals(code.trim()))
-                .findFirst()
-                .orElse(null);
+    public static Currency resolveCurrencyFromCode(String code) {
+        return VALID_CURRENCIES.get(code);
     }
 
     public String getCode() {

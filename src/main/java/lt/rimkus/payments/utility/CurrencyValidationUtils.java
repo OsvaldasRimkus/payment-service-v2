@@ -20,22 +20,15 @@ public final class CurrencyValidationUtils {
             );
 
     public static boolean isCurrencyNotValid(String currencyCode) {
-        for (Currency currencyType : Currency.values()) {
-            if (currencyType.getCode().equals(currencyCode)) {
-                return false;
-            }
-        }
-        return true;
+        return !Currency.isValidCurrency(currencyCode);
     }
 
     public static boolean isCurrencyNotValidForPaymentType(String currencyCode, String paymentTypeCode) {
-        Currency currency = Currency.fromCode(currencyCode);
-        PaymentType paymentType = PaymentType.resolvePaymentTypeFromCode(paymentTypeCode);
-
-        if (currency == null || paymentType == null) {
+        if (!Currency.isValidCurrency(currencyCode) || !PaymentType.isValidType(paymentTypeCode)) {
             return true;
         }
-
+        Currency currency = Currency.resolveCurrencyFromCode(currencyCode);
+        PaymentType paymentType = PaymentType.resolvePaymentTypeFromCode(paymentTypeCode);
         Set<Currency> allowedCurrencies = PAYMENT_TYPE_AND_CURRENCY_MAP.get(paymentType);
         return allowedCurrencies == null || !allowedCurrencies.contains(currency);
     }
