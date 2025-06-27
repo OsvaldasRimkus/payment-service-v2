@@ -16,6 +16,12 @@ public class MoneyDTO {
     @NotNull(message = "Money currency is required")
     private String currency;
 
+    public MoneyDTO() {
+    }
+
+    public MoneyDTO(BigDecimal bigDecimal, String eur) {
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

@@ -29,14 +29,14 @@ public class PaymentController {
     @GetMapping
     @Operation(summary = "Retrieve all payments")
     public List<Payment> getAllPayments() {
-        return paymentService.findAll();
+        return paymentService.getAllPayments();
     }
 
     @PostMapping
     @Operation(summary = "Create a new payment")
     public ResponseEntity<CreatePaymentResponseDTO> createPayment(@RequestBody @Valid CreatePaymentRequestDTO newPayment) {
         CreatePaymentResponseDTO responseDTO = new CreatePaymentResponseDTO();
-        responseDTO = paymentService.save(newPayment, responseDTO);
+        responseDTO = paymentService.savePayment(newPayment, responseDTO);
         if (!responseDTO.getValidationErrors().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDTO);
         } else {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PaymentService {
 
-    List<Payment> findAll();
+    List<Payment> getAllPayments();
 
-    CreatePaymentResponseDTO save(CreatePaymentRequestDTO newPayment, CreatePaymentResponseDTO responseDTO);
+    CreatePaymentResponseDTO savePayment(CreatePaymentRequestDTO newPayment, CreatePaymentResponseDTO responseDTO);
 }
