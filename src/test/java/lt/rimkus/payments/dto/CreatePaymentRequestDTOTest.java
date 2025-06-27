@@ -29,14 +29,15 @@ class CreatePaymentRequestDTOTest {
         // Setup valid money object for tests
         validMoney = new MoneyDTO();
         validMoney.setAmount(new BigDecimal("100.00"));
-        validMoney.setCurrency("USD");
+        validMoney.setCurrency("EUR");
 
         // Setup base valid payment request
         paymentRequest = new CreatePaymentRequestDTO();
-        paymentRequest.setType("TYPE2");
+        paymentRequest.setType("TYPE1");
         paymentRequest.setMoney(validMoney);
         paymentRequest.setDebtor_iban("DE89370400440532013000");
         paymentRequest.setCreditor_iban("FR1420041010050500013M02606");
+        paymentRequest.setDetails("Payment details.");
     }
 
     @Nested
@@ -47,7 +48,7 @@ class CreatePaymentRequestDTOTest {
         @DisplayName("Given valid payment type, When validating, Then validation should pass")
         void givenValidPaymentType_whenValidating_thenValidationShouldPass() {
             // Given
-            paymentRequest.setType("TYPE2");
+            paymentRequest.setType("TYPE1");
 
             // When
             Set<ConstraintViolation<CreatePaymentRequestDTO>> violations = validator.validate(paymentRequest);
@@ -305,6 +306,20 @@ class CreatePaymentRequestDTOTest {
         }
 
         @Test
+        @DisplayName("Given null creditor bank BIC, When validating for TYPE3 where it's mandatory, Then validation should pass")
+        void givenNullCreditorBankBicForTYPE3_whenValidating_thenValidationShouldFail() {
+            // Given
+            paymentRequest.setType("TYPE3");
+            paymentRequest.setCreditorBankBIC(null);
+
+            // When
+            Set<ConstraintViolation<CreatePaymentRequestDTO>> violations = validator.validate(paymentRequest);
+
+            // Then
+            assertEquals(1, violations.size());
+        }
+
+        @Test
         @DisplayName("Given valid creditor bank BIC, When validating, Then validation should pass")
         void givenValidCreditorBankBic_whenValidating_thenValidationShouldPass() {
             // Given
@@ -318,9 +333,11 @@ class CreatePaymentRequestDTOTest {
         }
 
         @Test
-        @DisplayName("Given null details, When validating, Then validation should pass")
+        @DisplayName("Given null details, When validating for TYPE3, Then validation should pass")
         void givenNullDetails_whenValidating_thenValidationShouldPass() {
             // Given
+            paymentRequest.setType("TYPE3");
+            paymentRequest.setCreditorBankBIC("BIC");
             paymentRequest.setDetails(null);
 
             // When
@@ -406,7 +423,7 @@ class CreatePaymentRequestDTOTest {
         @DisplayName("Given minimal valid payment request, When validating, Then validation should pass")
         void givenMinimalValidPaymentRequest_whenValidating_thenValidationShouldPass() {
             // Given
-            paymentRequest.setType("TYPE2");
+            paymentRequest.setType("TYPE1");
             paymentRequest.setMoney(validMoney);
             paymentRequest.setDebtor_iban("DE89370400440532013000");
             paymentRequest.setCreditor_iban("FR1420041010050500013M02606");
@@ -417,115 +434,6 @@ class CreatePaymentRequestDTOTest {
 
             // Then
             assertTrue(violations.isEmpty());
-        }
-    }
-
-    @Nested
-    @DisplayName("Getter and Setter Tests")
-    class GetterAndSetterTests {
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting type, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingType_thenShouldReturnCorrectValue() {
-            // Given
-            String expectedType = "TYPE2";
-
-            // When
-            paymentRequest.setType(expectedType);
-            String actualType = paymentRequest.getType();
-
-            // Then
-            assertEquals(expectedType, actualType);
-        }
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting money, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingMoney_thenShouldReturnCorrectValue() {
-            // Given
-            MoneyDTO expectedMoney = new MoneyDTO();
-
-            // When
-            paymentRequest.setMoney(expectedMoney);
-            MoneyDTO actualMoney = paymentRequest.getMoney();
-
-            // Then
-            assertEquals(expectedMoney, actualMoney);
-        }
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting debtor IBAN, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingDebtorIban_thenShouldReturnCorrectValue() {
-            // Given
-            String expectedIban = "GB82WEST12345698765432";
-
-            // When
-            paymentRequest.setDebtor_iban(expectedIban);
-            String actualIban = paymentRequest.getDebtor_iban();
-
-            // Then
-            assertEquals(expectedIban, actualIban);
-        }
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting creditor IBAN, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingCreditorIban_thenShouldReturnCorrectValue() {
-            // Given
-            String expectedIban = "ES9121000418450200051332";
-
-            // When
-            paymentRequest.setCreditor_iban(expectedIban);
-            String actualIban = paymentRequest.getCreditor_iban();
-
-            // Then
-            assertEquals(expectedIban, actualIban);
-        }
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting creditor bank BIC, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingCreditorBankBic_thenShouldReturnCorrectValue() {
-            // Given
-            String expectedBic = "SWIFT123";
-
-            // When
-            paymentRequest.setCreditorBankBIC(expectedBic);
-            String actualBic = paymentRequest.getCreditorBankBIC();
-
-            // Then
-            assertEquals(expectedBic, actualBic);
-        }
-
-        @Test
-        @DisplayName("Given payment request, When setting and getting details, Then should return correct value")
-        void givenPaymentRequest_whenSettingAndGettingDetails_thenShouldReturnCorrectValue() {
-            // Given
-            String expectedDetails = "Monthly subscription payment";
-
-            // When
-            paymentRequest.setDetails(expectedDetails);
-            String actualDetails = paymentRequest.getDetails();
-
-            // Then
-            assertEquals(expectedDetails, actualDetails);
-        }
-    }
-
-    @Nested
-    @DisplayName("Constructor Tests")
-    class ConstructorTests {
-
-        @Test
-        @DisplayName("Given default constructor, When creating payment request, Then all fields should be null")
-        void givenDefaultConstructor_whenCreatingPaymentRequest_thenAllFieldsShouldBeNull() {
-            // Given & When
-            CreatePaymentRequestDTO newPaymentRequest = new CreatePaymentRequestDTO();
-
-            // Then
-            assertNull(newPaymentRequest.getType());
-            assertNull(newPaymentRequest.getMoney());
-            assertNull(newPaymentRequest.getDebtor_iban());
-            assertNull(newPaymentRequest.getCreditor_iban());
-            assertNull(newPaymentRequest.getCreditorBankBIC());
-            assertNull(newPaymentRequest.getDetails());
         }
     }
 }

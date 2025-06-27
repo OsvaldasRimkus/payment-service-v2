@@ -19,7 +19,9 @@ public class MoneyDTO {
     public MoneyDTO() {
     }
 
-    public MoneyDTO(BigDecimal bigDecimal, String eur) {
+    public MoneyDTO(BigDecimal amount, String currency) {
+        this.amount = amount;
+        this.currency = currency;
     }
 
     public BigDecimal getAmount() {
