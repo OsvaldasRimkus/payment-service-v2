@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lt.rimkus.payments.validation.CreatePaymentRequestValidation;
 
-import java.math.BigDecimal;
-
 @CreatePaymentRequestValidation
 public class CreatePaymentRequestDTO {
     @NotBlank(message = "Payment type missing")
@@ -24,9 +22,6 @@ public class CreatePaymentRequestDTO {
     private String details;
 
     public CreatePaymentRequestDTO() {
-    }
-
-    public CreatePaymentRequestDTO(String type, BigDecimal amount, String currency, String debtorIban, String creditorIban) {
     }
 
     public String getType() {

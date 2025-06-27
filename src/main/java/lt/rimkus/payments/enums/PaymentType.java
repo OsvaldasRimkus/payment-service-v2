@@ -1,6 +1,8 @@
 package lt.rimkus.payments.enums;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum PaymentType {
     TYPE1("TYPE1"),
@@ -13,15 +15,15 @@ public enum PaymentType {
         this.code = code;
     }
 
-    public static PaymentType fromCode(String code) {
-        if (code == null) {
-            return null;
-        }
+    private static final Map<String, PaymentType> VALID_TYPES =
+            Arrays.stream(values()).collect(Collectors.toMap(Enum::name, e -> e));
 
-        return Arrays.stream(values())
-                .filter(t -> t.code.equals(code))
-                .findFirst()
-                .orElse(null);
+    public static boolean isValidType(String type) {
+        return VALID_TYPES.containsKey(type);
+    }
+
+    public static PaymentType resolvePaymentTypeFromCode(String code) {
+        return VALID_TYPES.get(code);
     }
 
     public String getCode() {

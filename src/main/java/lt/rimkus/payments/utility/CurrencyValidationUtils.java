@@ -30,7 +30,7 @@ public final class CurrencyValidationUtils {
 
     public static boolean isCurrencyNotValidForPaymentType(String currencyCode, String paymentTypeCode) {
         Currency currency = Currency.fromCode(currencyCode);
-        PaymentType paymentType = PaymentType.fromCode(paymentTypeCode);
+        PaymentType paymentType = PaymentType.resolvePaymentTypeFromCode(paymentTypeCode);
 
         if (currency == null || paymentType == null) {
             return true;

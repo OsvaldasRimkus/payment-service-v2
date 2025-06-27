@@ -9,11 +9,6 @@ public final class PaymentTypeValidationUtils {
     }
 
     public static boolean isPaymentTypeNotValid(String paymentTypeCode) {
-        for (PaymentType paymentType : PaymentType.values()) {
-            if (paymentType.getCode().equals(paymentTypeCode)) {
-                return false;
-            }
-        }
-        return true;
+        return paymentTypeCode == null || !PaymentType.isValidType(paymentTypeCode);
     }
 }

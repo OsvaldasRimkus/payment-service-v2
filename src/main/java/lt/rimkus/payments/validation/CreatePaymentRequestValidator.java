@@ -11,7 +11,7 @@ public class CreatePaymentRequestValidator implements ConstraintValidator<Create
     @Override
     public boolean isValid(CreatePaymentRequestDTO requestDTO, ConstraintValidatorContext context) {
         boolean isValid = true;
-        if (requestDTO == null || requestDTO.getMoney() == null) {
+        if (requestDTO == null || StringUtils.isBlank(requestDTO.getType()) || requestDTO.getMoney() == null) {
             return isValid; // @NotNull should handle null validations
         }
         context.disableDefaultConstraintViolation();
