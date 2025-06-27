@@ -1,6 +1,6 @@
 # Better and improved Payment Service v2
 
-To run with one command use this in project folder: ./mvnw spring-boot:run
+To run with one command use this in project folder: `./mvnw spring-boot:run`
 
 ## Tech stack:
 
