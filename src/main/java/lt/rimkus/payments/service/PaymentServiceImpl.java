@@ -4,6 +4,8 @@ import lt.rimkus.payments.converter.PaymentConverter;
 import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
 import lt.rimkus.payments.dto.CreatePaymentResponseDTO;
+import lt.rimkus.payments.dto.GetNotCancelledPaymentsDTO;
+import lt.rimkus.payments.dto.PaymentCancellationInfoDTO;
 import lt.rimkus.payments.factory.PaymentCreationFactory;
 import lt.rimkus.payments.model.Money;
 import lt.rimkus.payments.model.Payment;
@@ -11,6 +13,7 @@ import lt.rimkus.payments.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,6 +71,24 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
         return responseDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Long> getNotCanceledPaymentIds(GetNotCancelledPaymentsDTO requestDTO) {
+        BigDecimal minAmount = requestDTO.getMinAmount();
+        BigDecimal maxAmount = requestDTO.getMaxAmount();
+        if (!requestDTO.isFilter()) {
+            minAmount = null;
+            maxAmount = null;
+        }
+        return paymentRepository.getNotCancelledPaymentsWithinRange(minAmount, maxAmount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaymentCancellationInfoDTO getPaymentCancellationDetails(Long id) {
+        return paymentRepository.getPaymentCancellationDetails(id);
     }
 
 }

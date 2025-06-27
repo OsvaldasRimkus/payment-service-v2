@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
 import lt.rimkus.payments.dto.CreatePaymentResponseDTO;
+import lt.rimkus.payments.dto.GetNotCancelledPaymentsDTO;
+import lt.rimkus.payments.dto.PaymentCancellationInfoDTO;
 import lt.rimkus.payments.model.Payment;
 import lt.rimkus.payments.service.PaymentService;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -57,6 +61,20 @@ public class PaymentController {
             responseDTO.setMessage(PAYMENT_WITH_ID + paymentId + WAS_CANCELLED_WITH_FEE + responseDTO.getCancellationFee().getAmount() + " " + responseDTO.getCancellationFee().getCurrency());
             return ResponseEntity.ok(responseDTO);
         }
+    }
+
+    @Operation(summary = "Get all payments that are not canceled")
+    @RequestMapping(value = "querying/notCancelled", method = RequestMethod.POST)
+    public ResponseEntity<List<Long>> getNotCanceledPaymentIds(@RequestBody GetNotCancelledPaymentsDTO requestDTO) {
+        List<Long> responseDTO = paymentService.getNotCanceledPaymentIds(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+    }
+
+    @Operation(summary = "Get payment cancellation details")
+    @RequestMapping(value = "querying/cancellationDetails/{paymentId}", method = RequestMethod.POST)
+    public ResponseEntity<PaymentCancellationInfoDTO> getPaymentCancellationDetails(@RequestParam Long paymentId) {
+        PaymentCancellationInfoDTO responseDTO = paymentService.getPaymentCancellationDetails(paymentId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 }

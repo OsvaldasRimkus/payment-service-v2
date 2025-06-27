@@ -8,16 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CancelPaymentResponseDTO {
-    private final List<String> validationErrors = new ArrayList<>();
     private String message;
     @JsonProperty("payment")
     @JsonIgnore
     private PaymentDTO paymentDTO;
     private Money cancellationFee;
-
-    public List<String> getValidationErrors() {
-        return validationErrors;
-    }
 
     public String getMessage() {
         return message;
