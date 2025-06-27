@@ -3,6 +3,7 @@ package lt.rimkus.payments.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
+import lt.rimkus.payments.enums.PaymentType;
 import lt.rimkus.payments.utility.CurrencyValidationUtils;
 import lt.rimkus.payments.utility.PaymentTypeValidationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,25 +17,25 @@ public class CreatePaymentRequestValidator implements ConstraintValidator<Create
         }
         context.disableDefaultConstraintViolation();
 
-        if ("TYPE1".equals(requestDTO.getType()) && StringUtils.isEmpty(requestDTO.getDetails())) {
-            isValid &= addViolation(context, isValid, "Details are mandatory when payment type is TYPE1", "details");
+        if (PaymentType.TYPE1.getCode().equals(requestDTO.getType()) && StringUtils.isBlank(requestDTO.getDetails())) {
+            isValid &= addViolation(context, "Details are mandatory when payment type is " + PaymentType.TYPE1.getCode(), "details");
         }
-        if ("TYPE3".equals(requestDTO.getType()) && StringUtils.isEmpty(requestDTO.getCreditorBankBIC())) {
-            isValid &= addViolation(context, isValid, "Creditor Bank BIC is mandatory when payment type is TYPE3", "creditorBankBIC");
+        if (PaymentType.TYPE3.getCode().equals(requestDTO.getType()) && StringUtils.isBlank(requestDTO.getCreditorBankBIC())) {
+            isValid &= addViolation(context, "Creditor Bank BIC is mandatory when payment type is " + PaymentType.TYPE3.getCode(), "creditorBankBIC");
         }
         if (PaymentTypeValidationUtils.isPaymentTypeNotValid(requestDTO.getType())) {
-            isValid &= addViolation(context, isValid, "Payment type is not valid", "type_valid");
+            isValid &= addViolation(context, "Payment type is not valid", "type_valid");
         }
         if (CurrencyValidationUtils.isCurrencyNotValid(requestDTO.getMoney().getCurrency())) {
-            isValid &= addViolation(context, isValid, "Currency type is not valid", "money.currency_valid");
+            isValid &= addViolation(context, "Currency type is not valid", "money.currency_valid");
         }
         if (CurrencyValidationUtils.isCurrencyNotValidForPaymentType(requestDTO.getMoney().getCurrency(), requestDTO.getType())) {
-            isValid &= addViolation(context, isValid, "Currency type is not valid for payment type", "money.currency_compatible");
+            isValid &= addViolation(context, "Currency type is not valid for payment type", "money.currency_compatible");
         }
         return isValid;
     }
 
-    private boolean addViolation(ConstraintValidatorContext context, boolean isValid, String message, String propertyNode) {
+    private boolean addViolation(ConstraintValidatorContext context, String message, String propertyNode) {
         context.buildConstraintViolationWithTemplate(message)
                 .addPropertyNode(propertyNode)
                 .addConstraintViolation();
