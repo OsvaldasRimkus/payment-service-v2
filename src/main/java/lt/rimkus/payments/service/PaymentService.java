@@ -1,5 +1,6 @@
 package lt.rimkus.payments.service;
 
+import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
 import lt.rimkus.payments.dto.CreatePaymentResponseDTO;
 import lt.rimkus.payments.model.Payment;
@@ -11,4 +12,6 @@ public interface PaymentService {
     List<Payment> getAllPayments();
 
     CreatePaymentResponseDTO savePayment(CreatePaymentRequestDTO newPayment, CreatePaymentResponseDTO responseDTO);
+
+    CancelPaymentResponseDTO cancelPayment(Long paymentId, CancelPaymentResponseDTO responseDTO);
 }

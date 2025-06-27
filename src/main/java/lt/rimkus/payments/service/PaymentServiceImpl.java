@@ -1,15 +1,22 @@
 package lt.rimkus.payments.service;
 
 import lt.rimkus.payments.converter.PaymentConverter;
+import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
 import lt.rimkus.payments.dto.CreatePaymentRequestDTO;
 import lt.rimkus.payments.dto.CreatePaymentResponseDTO;
 import lt.rimkus.payments.factory.PaymentCreationFactory;
+import lt.rimkus.payments.model.Money;
 import lt.rimkus.payments.model.Payment;
 import lt.rimkus.payments.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static lt.rimkus.payments.message.ResponseMessages.PAYMENT_DOES_NOT_EXIST;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -17,11 +24,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentCreationFactory paymentCreationFactory;
     private final PaymentConverter paymentConverter;
+    private final PaymentCancellationService paymentCancellationService;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory, PaymentConverter paymentConverter) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory, PaymentConverter paymentConverter, PaymentCancellationService paymentCancellationService) {
         this.paymentRepository = paymentRepository;
         this.paymentCreationFactory = paymentCreationFactory;
         this.paymentConverter = paymentConverter;
+        this.paymentCancellationService = paymentCancellationService;
     }
 
     @Override
@@ -38,4 +47,27 @@ public class PaymentServiceImpl implements PaymentService {
         responseDTO.setPaymentDTO(paymentConverter.convertPaymentToDTO(newPayment));
         return responseDTO;
     }
+
+    @Override
+    @Transactional
+    public CancelPaymentResponseDTO cancelPayment(Long paymentId, CancelPaymentResponseDTO responseDTO) {
+        LocalDate dateOfCancellationRequest = LocalDate.now();
+        LocalDateTime timeOfCancellationRequest = LocalDateTime.now();
+
+        Optional<Payment> payment = paymentRepository.findById(paymentId);
+
+        if (payment.isEmpty()) {
+            responseDTO.setMessage(PAYMENT_DOES_NOT_EXIST);
+            return responseDTO;
+        } else {
+            Payment paymentToCancel = payment.get();
+            if (paymentCancellationService.isPaymentPreparedForCancellation(paymentToCancel, dateOfCancellationRequest, timeOfCancellationRequest, responseDTO)) {
+                paymentRepository.save(paymentToCancel);
+                responseDTO.setPaymentDTO(paymentConverter.convertPaymentToDTO(paymentToCancel));
+                responseDTO.setCancellationFee(new Money(paymentToCancel.getCancellationFee().getAmount(), paymentToCancel.getCancellationFee().getCurrency()));
+            }
+        }
+        return responseDTO;
+    }
+
 }
