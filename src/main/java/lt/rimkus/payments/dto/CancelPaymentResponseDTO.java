@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.rimkus.payments.model.Money;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CancelPaymentResponseDTO {
     private String message;
     @JsonProperty("payment")
