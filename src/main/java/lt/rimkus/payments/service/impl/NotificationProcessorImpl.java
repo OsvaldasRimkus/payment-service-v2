@@ -1,6 +1,9 @@
-package lt.rimkus.payments.service;
+package lt.rimkus.payments.service.impl;
 
 import lt.rimkus.payments.model.Payment;
+import lt.rimkus.payments.service.NotificationProcessor;
+import lt.rimkus.payments.service.NotificationServiceOne;
+import lt.rimkus.payments.service.NotificationServiceTwo;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;

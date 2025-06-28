@@ -1,4 +1,4 @@
-package lt.rimkus.payments.service;
+package lt.rimkus.payments.service.impl;
 
 import lt.rimkus.payments.converter.PaymentConverter;
 import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
@@ -10,6 +10,9 @@ import lt.rimkus.payments.factory.PaymentCreationFactory;
 import lt.rimkus.payments.model.Money;
 import lt.rimkus.payments.model.Payment;
 import lt.rimkus.payments.repository.PaymentRepository;
+import lt.rimkus.payments.service.NotificationProcessor;
+import lt.rimkus.payments.service.PaymentCancellationService;
+import lt.rimkus.payments.service.PaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,5 +1,6 @@
 package lt.rimkus.payments.service;
 
+import lt.rimkus.payments.service.impl.NotificationServiceOneImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

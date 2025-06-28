@@ -1,5 +1,6 @@
-package lt.rimkus.payments.service;
+package lt.rimkus.payments.service.impl;
 
+import lt.rimkus.payments.service.NotificationServiceOne;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

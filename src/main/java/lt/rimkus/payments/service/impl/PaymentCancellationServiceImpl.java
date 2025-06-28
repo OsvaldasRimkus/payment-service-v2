@@ -1,10 +1,11 @@
-package lt.rimkus.payments.service;
+package lt.rimkus.payments.service.impl;
 
 import lt.rimkus.payments.dto.CancelPaymentResponseDTO;
 import lt.rimkus.payments.enums.Currency;
 import lt.rimkus.payments.enums.PaymentType;
 import lt.rimkus.payments.model.Money;
 import lt.rimkus.payments.model.Payment;
+import lt.rimkus.payments.service.PaymentCancellationService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -49,7 +50,7 @@ public class PaymentCancellationServiceImpl implements PaymentCancellationServic
         return BigDecimal.valueOf(hours).multiply(coefficient).setScale(2, RoundingMode.CEILING);
     }
 
-    protected void updatePaymentData(Payment paymentToCancel, LocalDateTime timeOfCancellationRequest, BigDecimal cancellationFee) {
+    public void updatePaymentData(Payment paymentToCancel, LocalDateTime timeOfCancellationRequest, BigDecimal cancellationFee) {
         paymentToCancel.setCancelled(true);
         paymentToCancel.setCancellationFee(new Money(cancellationFee, Currency.EUR.getCode()));
         paymentToCancel.setCancellationTime(timeOfCancellationRequest);

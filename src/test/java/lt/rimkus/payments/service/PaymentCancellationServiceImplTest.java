@@ -5,6 +5,7 @@ import lt.rimkus.payments.model.Payment;
 import lt.rimkus.payments.model.TYPE1Payment;
 import lt.rimkus.payments.model.TYPE2Payment;
 import lt.rimkus.payments.model.TYPE3Payment;
+import lt.rimkus.payments.service.impl.PaymentCancellationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

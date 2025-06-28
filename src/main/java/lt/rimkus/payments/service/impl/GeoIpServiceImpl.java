@@ -1,8 +1,9 @@
-package lt.rimkus.payments.service;
+package lt.rimkus.payments.service.impl;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
+import lt.rimkus.payments.service.GeoIpService;
 import org.springframework.stereotype.Service;
 import org.springframework.core.io.ClassPathResource;
 import jakarta.annotation.PostConstruct;

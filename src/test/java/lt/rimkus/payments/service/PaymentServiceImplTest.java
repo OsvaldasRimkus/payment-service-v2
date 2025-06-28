@@ -14,6 +14,7 @@ import lt.rimkus.payments.model.Payment;
 import lt.rimkus.payments.model.TYPE1Payment;
 import lt.rimkus.payments.model.TYPE3Payment;
 import lt.rimkus.payments.repository.PaymentRepository;
+import lt.rimkus.payments.service.impl.PaymentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
