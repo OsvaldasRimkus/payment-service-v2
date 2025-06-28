@@ -61,6 +61,12 @@
 			<version>RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+        <!--for geolocation service-->
+		<dependency>
+			<groupId>com.maxmind.geoip2</groupId>
+			<artifactId>geoip2</artifactId>
+			<version>4.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
