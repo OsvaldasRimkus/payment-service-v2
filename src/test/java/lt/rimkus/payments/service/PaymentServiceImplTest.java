@@ -17,14 +17,19 @@ import lt.rimkus.payments.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -38,6 +43,7 @@ class PaymentServiceImplTest {
     private PaymentCreationFactory paymentCreationFactory;
     private PaymentConverter paymentConverter;
     private PaymentCancellationService paymentCancellationService;
+    private NotificationProcessor notificationProcessor;
     private PaymentServiceImpl paymentService;
 
     @BeforeEach
@@ -46,9 +52,10 @@ class PaymentServiceImplTest {
         paymentCreationFactory = mock(PaymentCreationFactory.class);
         paymentConverter = mock(PaymentConverter.class);
         paymentCancellationService = mock(PaymentCancellationService.class);
+        notificationProcessor = mock(NotificationProcessor.class);
 
         paymentService = new PaymentServiceImpl(
-                paymentRepository, paymentCreationFactory, paymentConverter, paymentCancellationService
+                paymentRepository, paymentCreationFactory, paymentConverter, paymentCancellationService, notificationProcessor
         );
     }
 
@@ -183,5 +190,30 @@ class PaymentServiceImplTest {
 
         // Then
         assertThat(result).isEqualTo(dto);
+    }
+
+    @Test
+    @DisplayName("Should notify external service and update payment with notification status")
+    void shouldNotifyAndUpdatePaymentWithNotificationStatus() {
+        // Given
+        CreatePaymentRequestDTO requestDTO = new CreatePaymentRequestDTO();
+        CreatePaymentResponseDTO responseDTO = new CreatePaymentResponseDTO();
+
+        Payment newPayment = new TYPE1Payment();
+
+        Mockito.when(paymentCreationFactory.createNewPayment(any())).thenReturn(newPayment);
+        Mockito.when(notificationProcessor.notifyServiceAboutCreatedPayment(any()))
+                .thenReturn(CompletableFuture.completedFuture("Success"));
+        Mockito.when(paymentConverter.convertPaymentToDTO(any())).thenReturn(new TYPE1PaymentDTO());
+
+        // When
+        paymentService.savePayment(requestDTO, responseDTO);
+
+        // Then (wait briefly for async to finish)
+        await().atMost(Duration.ofSeconds(2))
+                .untilAsserted(() -> {
+                    Mockito.verify(paymentRepository, Mockito.times(2)).save(any(Payment.class));
+                    assertEquals("Success", newPayment.getNotificationStatus());
+                });
     }
 }

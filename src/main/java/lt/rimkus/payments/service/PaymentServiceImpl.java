@@ -18,8 +18,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import static lt.rimkus.payments.message.ResponseMessages.FAILURE;
 import static lt.rimkus.payments.message.ResponseMessages.PAYMENT_DOES_NOT_EXIST;
+import static lt.rimkus.payments.message.ResponseMessages.SUCCESS;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -28,12 +31,14 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentCreationFactory paymentCreationFactory;
     private final PaymentConverter paymentConverter;
     private final PaymentCancellationService paymentCancellationService;
+    private final NotificationProcessor notificationProcessor;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory, PaymentConverter paymentConverter, PaymentCancellationService paymentCancellationService) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentCreationFactory paymentCreationFactory, PaymentConverter paymentConverter, PaymentCancellationService paymentCancellationService, NotificationProcessor notificationProcessor) {
         this.paymentRepository = paymentRepository;
         this.paymentCreationFactory = paymentCreationFactory;
         this.paymentConverter = paymentConverter;
         this.paymentCancellationService = paymentCancellationService;
+        this.notificationProcessor = notificationProcessor;
     }
 
     @Override
@@ -47,8 +52,18 @@ public class PaymentServiceImpl implements PaymentService {
     public CreatePaymentResponseDTO savePayment(CreatePaymentRequestDTO requestDTO, CreatePaymentResponseDTO responseDTO) {
         Payment newPayment = paymentCreationFactory.createNewPayment(requestDTO);
         paymentRepository.save(newPayment);
+        notifyServiceAndUpdatePaymentInDatabase(newPayment);
         responseDTO.setPaymentDTO(paymentConverter.convertPaymentToDTO(newPayment));
         return responseDTO;
+    }
+
+    private void notifyServiceAndUpdatePaymentInDatabase(Payment newPayment) {
+        CompletableFuture<String> notificationResult = notificationProcessor.notifyServiceAboutCreatedPayment(newPayment);
+        notificationResult.thenAccept((result) -> {
+            newPayment.setNotificationStatus(result != null && result.equals(SUCCESS) ? SUCCESS : FAILURE);
+            // Updating payment with notification status in DB
+            paymentRepository.save(newPayment);
+        });
     }
 
     @Override
