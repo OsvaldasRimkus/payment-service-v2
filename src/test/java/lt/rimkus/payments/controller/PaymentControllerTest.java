@@ -3,6 +3,7 @@ package lt.rimkus.payments.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lt.rimkus.payments.dto.*;
 import lt.rimkus.payments.model.*;
+import lt.rimkus.payments.service.GeoIpService;
 import lt.rimkus.payments.service.PaymentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class PaymentControllerTest {
 
     @MockitoBean
     private PaymentService paymentService;
+
+    @MockitoBean
+    private GeoIpService geoIpService;
 
     @Autowired
     private ObjectMapper objectMapper;

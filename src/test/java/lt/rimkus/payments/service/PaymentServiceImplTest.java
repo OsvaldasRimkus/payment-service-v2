@@ -85,6 +85,7 @@ class PaymentServiceImplTest {
 
         when(paymentCreationFactory.createNewPayment(requestDTO)).thenReturn(payment);
         when(paymentConverter.convertPaymentToDTO(payment)).thenReturn(paymentDTO);
+        when(notificationProcessor.notifyServiceAboutCreatedPayment(payment)).thenReturn(new CompletableFuture<>());
 
         // When
         CreatePaymentResponseDTO result = paymentService.savePayment(requestDTO, responseDTO);
