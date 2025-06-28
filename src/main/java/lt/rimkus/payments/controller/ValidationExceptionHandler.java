@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * this is to handle custom validation issues
+ */
 @ControllerAdvice
 public class ValidationExceptionHandler {
 

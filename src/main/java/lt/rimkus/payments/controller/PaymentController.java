@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -65,14 +64,14 @@ public class PaymentController {
 
     @Operation(summary = "Get all payments that are not canceled")
     @RequestMapping(value = "querying/notCancelled", method = RequestMethod.POST)
-    public ResponseEntity<List<Long>> getNotCanceledPaymentIds(@RequestBody GetNotCancelledPaymentsDTO requestDTO) {
+    public ResponseEntity<List<Long>> getNotCanceledPaymentIds(@RequestBody @Valid GetNotCancelledPaymentsDTO requestDTO) {
         List<Long> responseDTO = paymentService.getNotCanceledPaymentIds(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @Operation(summary = "Get payment cancellation details")
     @RequestMapping(value = "querying/cancellationDetails/{paymentId}", method = RequestMethod.POST)
-    public ResponseEntity<PaymentCancellationInfoDTO> getPaymentCancellationDetails(@RequestParam Long paymentId) {
+    public ResponseEntity<PaymentCancellationInfoDTO> getPaymentCancellationDetails(@PathVariable Long paymentId) {
         PaymentCancellationInfoDTO responseDTO = paymentService.getPaymentCancellationDetails(paymentId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
