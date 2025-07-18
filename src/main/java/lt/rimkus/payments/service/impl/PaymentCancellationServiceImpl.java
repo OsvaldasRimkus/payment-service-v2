@@ -31,6 +31,7 @@ public class PaymentCancellationServiceImpl implements PaymentCancellationServic
 
     @Override
     public boolean isPaymentPreparedForCancellation(Payment paymentToCancel, LocalDate dateOfCancellationRequest, LocalDateTime timeOfCancellationRequest, CancelPaymentResponseDTO responseDTO) {
+
         if (paymentToCancel.isCancelled()) {
             responseDTO.setMessage(PAYMENT_WITH_ID + paymentToCancel.getId() + IS_ALREADY_CANCELED);
             return false;
